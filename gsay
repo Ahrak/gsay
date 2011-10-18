@@ -1,0 +1,53 @@
+#! /usr/bin/env python
+#############################################################
+# shell script to access google translator audio response   #
+# @author Tommy Hartmann (toha@zlug.org)                    #
+# @version 0.1 (18.10.2011)				    #          #############################################################
+import sys
+import pycurl
+import subprocess
+import urllib
+import os
+
+#parse command line options
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-l", "--lang", dest="lang", default="en",
+                  help="define output language", metavar="LANG")
+parser.add_option("-f", "--file", dest="file", 
+                  default="/tmp/translate_tts",
+                  help="temporary output audio file", metavar="FILE")
+parser.add_option("-L", "--logfile", dest="log", 
+                  default="/tmp/gsay.log",
+                  help="logfile destination", metavar="LOGFILE")
+
+(options, args) = parser.parse_args()
+
+#params
+SENT = urllib.quote(' '.join(args))
+USERAGENT = "Mozilla/4.73 [en] (X11; U; Linux 2.2.15 i686)"
+FILE = options.file
+LOGFILE = options.log
+LANG = options.lang
+url = "http://translate.google.de/translate_tts?ie=UTF-8" + "&q=" + SENT + "&tl=" + LANG + "&prev=input"
+
+#Curl --> get the audio file
+f = open(FILE, "wb")
+c = pycurl.Curl()
+c.setopt(pycurl.URL, url)
+c.setopt(pycurl.FOLLOWLOCATION, 1)
+c.setopt(pycurl.MAXREDIRS, 5)
+c.setopt(c.WRITEDATA, f)
+c.perform()
+c.close()
+
+#play the audio file
+os.system("mplayer -really-quiet " + FILE + " 2>/dev/null &")
+#subprocess.check_output(["mplayer", "-really-quiet" , FILE ])
+
+#good bye!
+exit(0)
+
+
+
+
