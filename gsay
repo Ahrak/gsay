@@ -1,8 +1,11 @@
 #! /usr/bin/env python
 #############################################################
 # shell script to access google translator audio response   #
+#                                                           #
 # @author Tommy Hartmann (toha@zlug.org)                    #
-# @version 0.1 (18.10.2011)				    #          #############################################################
+# @version 0.1 (18.10.2011)				    #
+#                                                           #
+#############################################################
 import sys
 import pycurl
 import subprocess
@@ -31,10 +34,11 @@ LOGFILE = options.log
 LANG = options.lang
 url = "http://translate.google.de/translate_tts?ie=UTF-8" + "&q=" + SENT + "&tl=" + LANG + "&prev=input"
 
-#Curl --> get the audio file
+#Curl: get the audio file
 f = open(FILE, "wb")
 c = pycurl.Curl()
 c.setopt(pycurl.URL, url)
+c.setopt(pycurl.USERAGENT, USERAGENT)
 c.setopt(pycurl.FOLLOWLOCATION, 1)
 c.setopt(pycurl.MAXREDIRS, 5)
 c.setopt(c.WRITEDATA, f)
